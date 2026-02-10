@@ -26,4 +26,6 @@ The design philosophy is simple:
 ## Structure
 
 © 2026 Firelight Chronicle. All rights reserved.
+### Contact
+For support or inquiries: firelightchronicle@gmail.com
 Firelight Chronicle™ is a trademark of Kenneth Grass.
