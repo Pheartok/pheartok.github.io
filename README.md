@@ -24,3 +24,6 @@ The design philosophy is simple:
   Pure HTML/CSS/JS. No frameworks. No build steps. No dependencies.
 
 ## Structure
+
+© 2026 Firelight Chronicle. All rights reserved.
+Firelight Chronicle™ is a trademark of Kenneth Grass.
