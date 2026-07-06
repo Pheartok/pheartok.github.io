@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Firelight Chronicle – Forge Legends From Your Footage</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Firelight Chronicle turns your footage into cinematic chronicles with a local-first story engine, atmospheric UI, and SEO-ready output." />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --card: #1a1a1a;
+      --accent: #ffcc33;
+      --accent-soft: #e6b82e;
+      --text: #e6e6e6;
+      --muted: #888;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    h1, h2, h3 {
+      font-family: "Cinzel", serif;
+      letter-spacing: 0.5px;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Embers */
+    .embers {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .ember {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: rise linear infinite;
+      opacity: 0.7;
+    }
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1); opacity: 0.4; }
+      100% { transform: translateY(-120vh) scale(0.5); opacity: 0; }
+    }
+
+    /* Header */
+    .site-header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(6px);
+      z-index: 10;
+      transition: 0.3s ease;
+    }
+    .site-header-inner {
+      max-width: 1200px;
+      margin: auto;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    .nav-links a {
+      margin-left: 20px;
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 160px 20px 80px;
+      text-align: center;
+      max-width: 900px;
+      margin: auto;
+      position: relative;
+      z-index: 2;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+    .hero-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+    .hero-tagline {
+      font-size: 1rem;
+      opacity: 0.7;
+      margin-bottom: 30px;
+    }
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      border: none;
+      transition: 0.2s;
+      display: inline-block;
+      font-weight: 600;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    /* Sections */
+    section {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+    .plan {
+      background: var(--card);
+      padding: 30px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      text-align: center;
+    }
+    .plan-price {
+      font-size: 2rem;
+      margin: 10px 0;
+      color: var(--accent);
+    }
+    .plan-badge {
+      background: var(--accent);
+      color: #000;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    .plan-cta {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: block;
+      text-decoration: none;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    .modal-backdrop.visible {
+      display: flex;
+    }
+    .modal {
+      background: var(--card);
+      padding: 40px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 450px;
+      text-align: center;
+      border: 1px solid var(--accent);
+      box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+    }
+    .modal-download {
+      display: block;
+      padding: 14px;
+      background: var(--accent);
+      color: #000;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    /* Reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    footer {
+      text-align: center;
+      padding: 60px 20px;
+      opacity: 0.6;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="embers"></div>
+
+  <div class="modal-backdrop" id="downloadModal">
+    <div class="modal">
+      <h3 style="color: var(--accent);">Choose Your Path</h3>
+      <p style="margin-bottom: 25px; opacity: 0.8;">Firelight Chronicle · Windows · Local‑first</p>
+
+      <a href="https://github.com/Pheartok/Firelight-Chronicle/releases/download/V1.0.0/FirelightChronicle_v1.0.zip"
+         class="modal-download">
+        Take the Free Path
+      </a>
+
+      <a href="https://www.paypal.com/ncp/payment/N7DSS9WZHPH7A" class="modal-download" style="background: #e6b82e;">
+        Creator Edition - $9.99
+      </a>
+
+      <a href="https://www.paypal.com/ncp/payment/9MJW4LZCAAGEW" class="modal-download" style="background: #e6b82e;">
+        Lifetime Edition - $34.99
+      </a>
+
+      <span class="modal-close" data-close-modal style="margin-top: 20px; display: block; cursor: pointer; opacity: 0.6;">[ Close Window ]</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="site-header-inner">
+      <div class="brand">
+        <span class="brand-text">FIRELIGHT CHRONICLE</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#about">About</a>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#support">Support</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Forge Legends From Your Footage</h1>
+    <p class="hero-subtitle">A local‑first chronicle engine for creators.</p>
+    <p class="hero-tagline">Built for explorers, wanderers, and quiet tacticians.</p>
+
+    <div class="hero-actions">
+      <button class="btn btn-primary" data-open-modal>Choose Your Path</button>
+      <a href="#demo" class="btn btn-ghost">Watch Demo</a>
+    </div>
+  </section>
+
+  <section id="demo" style="text-align: center;">
+      <h2 style="color: var(--accent); margin-bottom: 30px;">The Forge in Action</h2>
+      <div style="max-width: 800px; margin: 0 auto; border: 1px solid var(--accent); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);">
+          <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+              <iframe 
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+                  src="https://www.youtube.com/embed/fWtbXArimnM?rel=0" 
+                  title="Firelight Chronicle Demo" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowfullscreen>
+              </iframe>
+          </div>
+      </div>
+  </section>
+
+  <main>
+    <section id="about" class="reveal">
+      <h2>A storyteller at your command.</h2>
+      <p>Firelight Chronicle forges your footage into a complete narrative bundle: cinematic prose, structured summaries, and SEO‑ready metadata. Built for creators who value craft and control.</p>
+    </section>
+
+    <section id="features" class="reveal">
+      <h2>Professional Workflows</h2>
+      <p>Local‑first processing for speed and privacy. No subscriptions. No cloud-based delays.</p>
+    </section>
+
+    <section id="pricing" class="reveal">
+      <h2 style="text-align: center;">Choose your path.</h2>
+      <div class="pricing-grid">
+        <div class="plan">
+          <h3>Free Edition</h3>
+          <div class="plan-price">$0</div>
+          <p>Explore the engine.</p>
+          <button class="plan-cta" data-open-modal>Take the Free Path</button>
+        </div>
+
+        <div class="plan">
+          <div class="plan-badge">One‑time</div>
+          <h3>Creator Edition</h3>
+          <div class="plan-price">$14.99</div>
+          <p>For regular publishers.</p>
+          <a href="https://www.paypal.com/ncp/payment/N7DSS9WZHPH7A" class="plan-cta">Forge Your Path</a>
+        </div>
+
+        <div class="plan">
+          <div class="plan-badge">Lifetime</div>
+          <h3>Lifetime Edition</h3>
+          <div class="plan-price">$49.99</div>
+          <p>Long‑term operators.</p>
+          <a href="https://www.paypal.com/ncp/payment/9MJW4LZCAAGEW" class="plan-cta">Secure Forever</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="support" class="reveal">
+      <h2>Support</h2>
+      <p>Contact the creator directly at: 
+       <a href="mailto:support@embersmithstudios.com" style="color: #ce5c00; font-weight: bold; text-decoration: none;">support@embersmithstudios.com</a></p>
+    </section>
+  </main>
+
+  <footer>
+    © 2026 Firelight Chronicle. All rights reserved.
+  </footer>
+
+  <script>
+    // Reveal Logic
+    const onScrollReveal = () => {
+      document.querySelectorAll(".reveal").forEach(el => {
+        if (el.getBoundingClientRect().top < window.innerHeight * 0.9) {
+          el.classList.add("visible");
+        }
+      });
+    };
+    window.addEventListener("scroll", onScrollReveal);
+    window.addEventListener("load", onScrollReveal);
+
+    // Modal Logic
+    const modal = document.getElementById("downloadModal");
+    document.querySelectorAll("[data-open-modal]").forEach(btn => {
+      btn.addEventListener("click", () => modal.classList.add("visible"));
+    });
+    document.querySelectorAll("[data-close-modal]").forEach(el => {
+      el.addEventListener("click", () => modal.classList.remove("visible"));
+    });
+
+    // Embers Logic
+    function createEmbers() {
+      const container = document.querySelector(".embers");
+      for (let i = 0; i < 40; i++) {
+        const ember = document.createElement("div");
+        ember.className = "ember";
+        ember.style.left = Math.random() * 100 + "vw";
+        ember.style.bottom = "-10px";
+        ember.style.animationDuration = (5 + Math.random() * 10) + "s";
+        ember.style.animationDelay = (Math.random() * 5) + "s";
+        container.appendChild(ember);
+      }
+    }
+    window.addEventListener("load", createEmbers);
+  </script>
+</body>
+</html>
